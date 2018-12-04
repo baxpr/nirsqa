@@ -1,0 +1,6 @@
+INPUTS*
+OUTPUTS*
+local*
+*.tar.gz
+*.zip
+*.simg
