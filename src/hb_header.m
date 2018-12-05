@@ -1,4 +1,5 @@
-function mes = hb_header(mes)
+function mes = hb_header(mes,out_dir)
+
 % Hb files use the same header, except the Probe line is different
 chunk = [sprintf('CH%d,',1:mes.nchannels) ...
 	'Mark,Time,BodyMovement,RemovalMark,PreScan' ];
@@ -9,14 +10,10 @@ hb.deoxyheader{end} = ['Probe1(Deoxy),' chunk];
 hb.totalheader = mes.header;
 hb.totalheader{end} = ['Probe1(Total),' chunk];
 
+% Update sample time, filter settings
 
 % Base filename
-[p,n] = fileparts(mes.file);
-tag = regexp(n,'(.*)_MES_Probe1','tokens');
-fileprefix = 'tddr_d'
-bfname = fullfile(p,[fileprefix tag{1}{1} '_HBA_Probe1_']);
-
-% Update sample time
+bfname = fullfile(out_dir,'tddr_d_HBA_Probe1_');
 
 % Write
 write_hb_part([bfname 'Oxy.csv'],mes,hb.oxyheader,mes.hb_oxy_d);
