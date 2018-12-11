@@ -7,16 +7,32 @@ des = make_design(mes,params);
 
 
 % Create info string
-info = sprintf('%s %s %s %s   ---   Processing timestamp: %s\n', ...
-	params.project,params.subject,params.session,params.scan, ...
-	char(datetime));
+info = sprintf('%s %s %s %s\n', ...
+	params.project,params.subject,params.session,params.scan);
 info = [ info ...
-	sprintf('Sampletime %3.1f sec, High-pass cutoff %d sec, downsampling factor %d\n', ...
-	mes.sampletime,params.hpf_cutoff_sec,params.downsample) ...
+	sprintf(['Sampletime %3.1f sec, High-pass cutoff %d sec, ' ...
+	'downsampling %dx, Proc %s'], ...
+	mes.sampletime,params.hpf_cutoff_sec,params.downsample,char(datetime)) ...
 	];
 
 % Load channel metrics and create channel string
-%qa = readtable(fullfile(params.out_dir,'qa_stats.csv'));
+qa = readtable(fullfile(params.out_dir,'qa_stats.csv'));
+
+qastr1 = sprintf('Ch    SCI  oxySD  deoxySD oxyCNRev oxyCNRbk\n');
+for c = 1:min(24,height(qa))
+	this = sprintf('%2d  %5.2f  %5.3f    %5.3f     %4.2f     %4.2f\n', ...
+		qa.Ch(c),qa.SCI(c),qa.SD_Oxy(c),qa.SD_DeOxy(c), ...
+		qa.CNR_Oxy_Ev(c),qa.CNR_Oxy_Bk(c) );
+	qastr1 = [qastr1 this];
+end
+
+qastr2 = sprintf('Ch    SCI  oxySD  deoxySD oxyCNRev oxyCNRbk\n');
+for c = 25:height(qa) 
+	this = sprintf('%2d  %5.2f  %5.3f    %5.3f     %4.2f     %4.2f\n', ...
+		qa.Ch(c),qa.SCI(c),qa.SD_Oxy(c),qa.SD_DeOxy(c), ...
+		qa.CNR_Oxy_Ev(c),qa.CNR_Oxy_Bk(c) );
+	qastr2 = [qastr2 this];
+end
 
 
 % Figure out screen size so the figure will fit
@@ -40,6 +56,10 @@ H = guihandles(pdf_figure);
 
 % Place info string
 set(H.summary_text, 'String',info);
+
+% Place info string
+set(H.data1, 'String',qastr1);
+set(H.data2, 'String',qastr2);
 
 % Plot design before and after filtering
 t = 0:des.sampletime:des.sampletime*(des.nt-1);
@@ -65,9 +85,6 @@ plot(t_d,des.fX_block_d)
 ylabel('Bk post-filt')
 xlabel('Time (s)')
 set(gca,'XLim',[0 max(t)],'Ylim',[-1 1],'YTickLabel',[]);
-
-
-
 
 
 % Print to PNG
