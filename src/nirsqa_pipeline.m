@@ -6,7 +6,7 @@ mes = read_mes(mes_file);
 % Compute optical density
 mes = mes2od(mes);
 
-% Apply TDDR filter
+% Apply filters
 mes = filter_TDDR(mes,params);
 
 % Compute hemoglobin concentration estimates
