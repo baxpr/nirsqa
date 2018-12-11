@@ -1,4 +1,4 @@
-function mes = nirsqa_pipeline(mes_file,out_dir)
+function mes = nirsqa_pipeline(mes_file,params)
 
 % Load MES file
 mes = read_mes(mes_file);
@@ -7,13 +7,13 @@ mes = read_mes(mes_file);
 mes = mes2od(mes);
 
 % Apply TDDR filter
-mes = filter_TDDR(mes);
+mes = filter_TDDR(mes,params);
 
 % Compute hemoglobin concentration estimates
-mes = hb_compute(mes);
+mes = hb_compute(mes,params);
 
 % Create Hb file header and save Hb data
-mes = hb_header(mes,out_dir);
+hb_write(mes,params);
 
 % Create PDF report
 

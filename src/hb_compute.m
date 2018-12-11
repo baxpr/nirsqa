@@ -1,4 +1,4 @@
-function mes = hb_compute(mes)
+function mes = hb_compute(mes,params)
 
 % Get coef table - use "which" here so matlab will still be able to find
 % this file when we compile the code for a spider
@@ -6,6 +6,8 @@ load(which('all_e_coef.mat'));
 e_coef = all_e_coef;
 
 % Initialize some outputs that we will update one column at a time
+mes.sampletime_d = mes.sampletime * params.downsample;
+
 mes.od_tddr_d = [];
 
 mes.hb_oxy = [];
@@ -33,19 +35,8 @@ for c = 1:mes.nchannels
 	end
 	
 	% Downsample OD data
-	factor = 10;
-	mes.od_tddr_d(:,ind700) = decimate(mes.od_tddr(:,ind700), factor);
-	mes.od_tddr_d(:,ind830) = decimate(mes.od_tddr(:,ind830), factor);
-	
-	% Consider a highpass filter here as well, instead of applying it later
-	% to the Hb data
-	%F = designfilt('highpassiir', ...
-	%	'StopbandFrequency', .004, 'PassbandFrequency', .005, ...
-	%	'StopbandAttenuation', 60, 'PassbandRipple', 2, ...
-	%	'SampleRate', 1/mes.sampletime/factor, ...
-	%	'DesignMethod', 'cheby1');
-	%mes.od_tddr_d(:,ind700) = filter(F,mes.od_tddr_d(:,ind700));
-	%mes.od_tddr_d(:,ind830) = filter(F,mes.od_tddr_d(:,ind830));
+	mes.od_tddr_d(:,ind700) = decimate(mes.od_tddr(:,ind700), params.downsample);
+	mes.od_tddr_d(:,ind830) = decimate(mes.od_tddr(:,ind830), params.downsample);
 	
 	% Get the exact wavelength values for this channel
 	wlen_700 = mes.wavelength(ind700);
@@ -86,7 +77,7 @@ end
 
 %% Now downsample the non-NIRS stuff (event markers etc)
 prerow = (1:size(mes.od_tddr,1))';
-postrow = downsample(prerow,factor);
+postrow = downsample(prerow,params.downsample);
 
 % For the marks, identify the time of each mark and put it in the
 % downsampled data at the closest available time.
