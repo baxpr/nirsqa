@@ -1,0 +1,13 @@
+function out = high_pass_filter(in,sampletime,params)
+
+% High pass filter is in a separate function so we can use it multiple
+% places (i.e. for data and for design)
+
+filterfreq = 1 / params.hpf_cutoff_sec;
+Fhi = designfilt('highpassiir', ...
+	'StopbandFrequency',0.5*filterfreq, 'PassbandFrequency',filterfreq, ...
+	'StopbandAttenuation',60, 'PassbandRipple',1, ...
+	'SampleRate', 1/sampletime, ...
+	'DesignMethod', 'cheby1');
+
+out = filtfilt(Fhi,in);

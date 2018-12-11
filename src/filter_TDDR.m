@@ -1,22 +1,16 @@
-function mes = filter_TDDR(mes,params)
+function mes = filter_TDDR(mes)
 
 
 %% Filter setups
-% Low pass filter 0.5 Hz to avoid high frequencies interfering with the TDDR
+% Low pass filter 0.5 Hz to avoid high frequencies interfering with the
+% TDDR  - this only gets applied within the TDDR process and its result is
+% not kept otherwise.
 Flow = designfilt('lowpassfir', ...
 	'PassbandFrequency', .45, ...
 	'StopbandFrequency', .55, ...
 	'PassbandRipple', 1, ...
 	'StopbandAttenuation', 60, ...
 	'SampleRate', 1/mes.sampletime);
-
-% Highpass filter to apply to TDDR result
-filterfreq = 1 / params.hpf_cutoff_sec;
-Fhi = designfilt('highpassiir', ...
-	'StopbandFrequency',0.8*filterfreq, 'PassbandFrequency',filterfreq, ...
-	'StopbandAttenuation',60, 'PassbandRipple',2, ...
-	'SampleRate', 1/mes.sampletime, ...
-	'DesignMethod', 'cheby1');
 
 
 %% Apply filter to the optical density data and get first differences
@@ -43,7 +37,7 @@ for c = 1:size(f_od,2)
 	mes.od_tddr(:,c) = cumsum(yp) + resid(:,c);
 	
 	% High pass filter
-	mes.od_tddr(:,c) = filter(Fhi,mes.od_tddr(:,c));
+	mes.od_tddr(:,c) = high_pass_filter(mes.od_tddr(:,c),mes.sampletime_d,params);
 	
 end
 
