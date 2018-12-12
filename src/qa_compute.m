@@ -38,7 +38,7 @@ qa.SD_Oxy = std(mes.hb_oxy_d)';
 qa.SD_DeOxy = std(mes.hb_deoxy_d)';
 
 
-%% Contrast-to-noise
+%% Contrast-to-noise and Rsq
 des = make_design(mes,params);
 Xev = [des.fX_event_d ones(des.nt_d,1)];
 Xbk = [des.fX_block_d ones(des.nt_d,1)];
@@ -50,10 +50,12 @@ for c = 1:height(qa)
 	[~,~,residE] = regress(Y,Xev);
 	explE = Y - residE;
 	qa.CNR_Oxy_Ev(c,1) = var(explE) / var(residE);
+	qa.RSQ_Oxy_Ev(c,1) = 1 - var(residE)/var(Y);
 	
 	[~,~,residB] = regress(Y,Xbk);
 	explB = Y - residB;
 	qa.CNR_Oxy_Bk(c,1) = var(explB) / var(residB);
+	qa.RSQ_Oxy_Bk(c,1) = 1 - var(residB)/var(Y);
 	
 end
 

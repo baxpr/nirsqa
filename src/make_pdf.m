@@ -20,19 +20,19 @@ info = [ info ...
 % Load channel metrics and create channel string
 qa = readtable(fullfile(params.out_dir,'qa_stats.csv'));
 
-qastr1 = sprintf('Ch    SCI  oxySD  deoxySD oxyCNRev oxyCNRbk\n');
+qastr1 = sprintf('Ch    SCI  oxySD  deoxySD oxyRSQev oxyRSQbk\n');
 for c = 1:min(24,height(qa))
 	this = sprintf('%2d  %5.2f  %5.3f    %5.3f    %5.3f    %5.3f\n', ...
 		qa.Ch(c),qa.SCI(c),qa.SD_Oxy(c),qa.SD_DeOxy(c), ...
-		qa.CNR_Oxy_Ev(c),qa.CNR_Oxy_Bk(c) );
+		qa.RSQ_Oxy_Ev(c),qa.RSQ_Oxy_Bk(c) );
 	qastr1 = [qastr1 this];
 end
 
-qastr2 = sprintf('Ch    SCI  oxySD  deoxySD oxyCNRev oxyCNRbk\n');
+qastr2 = sprintf('Ch    SCI  oxySD  deoxySD oxyRSQev oxyRSQbk\n');
 for c = 25:height(qa)
 	this = sprintf('%2d  %5.2f  %5.3f    %5.3f     %4.2f     %4.2f\n', ...
 		qa.Ch(c),qa.SCI(c),qa.SD_Oxy(c),qa.SD_DeOxy(c), ...
-		qa.CNR_Oxy_Ev(c),qa.CNR_Oxy_Bk(c) );
+		qa.RSQ_Oxy_Ev(c),qa.RSQ_Oxy_Bk(c) );
 	qastr2 = [qastr2 this];
 end
 
