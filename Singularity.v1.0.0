@@ -25,12 +25,14 @@ session UNK_SESS \
 project UNK_SCAN \
 out_dir /OUTPUTS
 
+%setup
+  mkdir -p ${SINGULARITY_ROOTFS}/opt/nirsqa
 
 %files
-  bin /opt/nirsqa/bin
-  src /opt/nirsqa/src
-  external /opt/nirsqa/external
-  README.md /opt/nirsqa/README.md
+  bin /opt/nirsqa
+  src /opt/nirsqa
+  external /opt/nirsqa
+  README.md /opt/nirsqa
  
 %labels
   Maintainer baxter.rogers@vanderbilt.edu
