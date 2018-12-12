@@ -13,9 +13,12 @@ info = sprintf('%s %s %s %s\n', ...
 	params.project,params.subject,params.session,params.scan);
 info = [ info ...
 	sprintf(['Sampletime %3.1f sec, High-pass cutoff %d sec, ' ...
-	'downsampling %dx, Proc %s'], ...
-	mes.sampletime,params.hpf_cutoff_sec,params.downsample,char(datetime)) ...
+	'downsampling %dx'], ...
+	mes.sampletime,params.hpf_cutoff_sec,params.downsample) ...
 	];
+
+% Processing timestamp
+proc = sprintf('%s',char(datetime));
 
 % Load channel metrics and create channel string
 qa = readtable(fullfile(params.out_dir,'qa_stats.csv'));
@@ -56,12 +59,11 @@ pdf_figure = openfig('report_page1.fig','new');
 set(pdf_figure,'Units','pixels','Position',[0 0 dw dh]);
 H = guihandles(pdf_figure);
 
-% Place info string
-set(H.summary_text, 'String',info);
-
-% Place info string
-set(H.data1, 'String',qastr1);
-set(H.data2, 'String',qastr2);
+% Place info strings
+set(H.summary_text,'String',info);
+set(H.procdate,'String',proc);
+set(H.data1,'String',qastr1);
+set(H.data2,'String',qastr2);
 
 % Plot design before and after filtering
 t = 0:des.sampletime:des.sampletime*(des.nt-1);
@@ -106,8 +108,9 @@ for c = 1:3:height(qa)
 	set(pdf_figure,'Units','pixels','Position',[0 0 dw dh]);
 	H = guihandles(pdf_figure);
 	
-	% Place info string
-	set(H.summary_text, 'String',info);
+	% Place info strings
+	set(H.summary_text,'String',info);
+	set(H.procdate,'String',proc);
 	
 	% Plot channel data
 	axes(H.ax1)
