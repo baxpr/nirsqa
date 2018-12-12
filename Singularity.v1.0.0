@@ -37,8 +37,13 @@ out_dir /OUTPUTS
 
 %post
   apt-get update
-  apt-get install -y wget unzip openjdk-8-jre libxt6
+  apt-get install -y wget unzip openjdk-8-jre libxt6 \
+    xvfb ghostscript imagemagick
   
+  # Fix imagemagick policy to allow PDF output. See https://usn.ubuntu.com/3785-1/
+  sed -i 's/rights="none" pattern="PDF"/rights="read | write" pattern="PDF"/' \
+    /etc/ImageMagick-6/policy.xml
+
   # Download the Matlab Compiled Runtime installer, install, clean up
   mkdir /MCR
   wget -nv -P /MCR http://ssd.mathworks.com/supportfiles/downloads/R2017a/deployment_files/R2017a/installers/glnxa64/MCR_R2017a_glnxa64_installer.zip
