@@ -27,10 +27,10 @@ out_dir /OUTPUTS
 
 
 %files
-  bin /opt/nirsqa
-  src /opt/nirsqa
-  external /opt/nirsqa
-  README.md /opt/nirsqa
+  bin /opt/nirsqa/bin
+  src /opt/nirsqa/src
+  external /opt/nirsqa/external
+  README.md /opt/nirsqa/README.md
  
 %labels
   Maintainer baxter.rogers@vanderbilt.edu
