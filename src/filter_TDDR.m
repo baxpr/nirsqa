@@ -1,4 +1,4 @@
-function mes = filter_TDDR(mes)
+function mes = filter_TDDR(mes,params)
 
 
 %% Filter setups
@@ -11,6 +11,9 @@ Flow = designfilt('lowpassfir', ...
 	'PassbandRipple', 1, ...
 	'StopbandAttenuation', 60, ...
 	'SampleRate', 1/mes.sampletime);
+
+% Downsampling sample rate
+mes.sampletime_d = mes.sampletime * params.downsample;
 
 
 %% Apply filter to the optical density data and get first differences

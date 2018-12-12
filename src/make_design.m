@@ -37,6 +37,7 @@ for c = 1:nconds
 	q = conv(stim(:,c),spm_hrf(des.sampletime,des.hrf_p,16));
 	des.X_event(:,c) = q(1:des.nt,:) / max(q);
 	des.fX_event(:,c) = high_pass_filter(des.X_event(:,c),mes.sampletime,params);
+	des.X_event_d(:,c) = decimate(des.X_event(:,c),params.downsample);
 	des.fX_event_d(:,c) = decimate(des.fX_event(:,c),params.downsample);
 end
 
@@ -48,6 +49,7 @@ for c = 1:nconds
 	q = conv(stimB(:,c),spm_hrf(des.sampletime,des.hrf_p,16));
 	des.X_block(:,c) = q(1:des.nt,:) / max(q);
 	des.fX_block(:,c) = high_pass_filter(des.X_block(:,c),mes.sampletime,params);
+	des.X_block_d(:,c) = decimate(des.X_block(:,c),params.downsample);
 	des.fX_block_d(:,c) = decimate(des.fX_block(:,c),params.downsample);
 end
 

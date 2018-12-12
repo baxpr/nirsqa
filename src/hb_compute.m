@@ -6,8 +6,6 @@ load(which('all_e_coef.mat'));
 e_coef = all_e_coef;
 
 % Initialize some outputs that we will update one column at a time
-mes.sampletime_d = mes.sampletime * params.downsample;
-
 mes.od_tddr_d = [];
 
 mes.hb_oxy = [];

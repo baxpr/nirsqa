@@ -1,6 +1,8 @@
 function make_pdf(mes,params)
 
 
+%% PAGE 1, overview and channel stats
+
 % Create regressors for the specified stimuli. Purpose is to show how they
 % are affected by filtering.
 des = make_design(mes,params);
@@ -20,14 +22,14 @@ qa = readtable(fullfile(params.out_dir,'qa_stats.csv'));
 
 qastr1 = sprintf('Ch    SCI  oxySD  deoxySD oxyCNRev oxyCNRbk\n');
 for c = 1:min(24,height(qa))
-	this = sprintf('%2d  %5.2f  %5.3f    %5.3f     %4.2f     %4.2f\n', ...
+	this = sprintf('%2d  %5.2f  %5.3f    %5.3f    %5.3f    %5.3f\n', ...
 		qa.Ch(c),qa.SCI(c),qa.SD_Oxy(c),qa.SD_DeOxy(c), ...
 		qa.CNR_Oxy_Ev(c),qa.CNR_Oxy_Bk(c) );
 	qastr1 = [qastr1 this];
 end
 
 qastr2 = sprintf('Ch    SCI  oxySD  deoxySD oxyCNRev oxyCNRbk\n');
-for c = 25:height(qa) 
+for c = 25:height(qa)
 	this = sprintf('%2d  %5.2f  %5.3f    %5.3f     %4.2f     %4.2f\n', ...
 		qa.Ch(c),qa.SCI(c),qa.SD_Oxy(c),qa.SD_DeOxy(c), ...
 		qa.CNR_Oxy_Ev(c),qa.CNR_Oxy_Bk(c) );
@@ -88,7 +90,88 @@ set(gca,'XLim',[0 max(t)],'Ylim',[-1 1],'YTickLabel',[]);
 
 
 % Print to PNG
-print(gcf,'-dpng',fullfile(params.out_dir,'page1.png'))
+print(gcf,'-dpng',fullfile(params.out_dir,'page_01.png'))
 close(gcf);
 
+
+
+%% Page 2+, channel data
+
+% Loop through channels 3 at a time
+pg = 1;
+for c = 1:3:height(qa)
+	
+	% Create figure
+	pdf_figure = openfig('report_page2.fig','new');
+	set(pdf_figure,'Units','pixels','Position',[0 0 dw dh]);
+	H = guihandles(pdf_figure);
+	
+	% Place info string
+	set(H.summary_text, 'String',info);
+	
+	% Plot channel data
+	axes(H.ax1)
+	plot(t,mes.od(:,mes.channel==c))
+	ylabel(sprintf('Ch %d OD',c))
+	set(gca,'XLim',[0 max(t)],'XTickLabel',[],'YTickLabel',[]);
+	
+	axes(H.ax2); hold on
+	plot(t_d,mes.hb_oxy_d(:,c),'r')
+	plot(t_d,mes.hb_deoxy_d(:,c),'b')
+	ylabel(sprintf('Ch %d Hb',c))
+	set(gca,'XLim',[0 max(t)],'XTickLabel',[],'YTickLabel',[]);
+	
+	if c+1 <= mes.nchannels
+		
+		axes(H.ax3)
+		plot(t,mes.od(:,mes.channel==c+1))
+		ylabel(sprintf('Ch %d OD',c+1))
+		set(gca,'XLim',[0 max(t)],'XTickLabel',[],'YTickLabel',[]);
+		
+		axes(H.ax4); hold on
+		plot(t_d,mes.hb_oxy_d(:,c+1),'r')
+		plot(t_d,mes.hb_deoxy_d(:,c+1),'b')
+		ylabel(sprintf('Ch %d Hb',c+2))
+		set(gca,'XLim',[0 max(t)],'XTickLabel',[],'YTickLabel',[]);
+		
+	end
+	
+	if c+1 <= mes.nchannels
+		
+		axes(H.ax5)
+		plot(t,mes.od(:,mes.channel==c+2))
+		ylabel(sprintf('Ch %d OD',c+2))
+		set(gca,'XLim',[0 max(t)],'XTickLabel',[],'YTickLabel',[]);
+		
+		axes(H.ax6); hold on
+		plot(t_d,mes.hb_oxy_d(:,c+2),'r')
+		plot(t_d,mes.hb_deoxy_d(:,c+2),'b')
+		ylabel(sprintf('Ch %d Hb',c+2))
+		set(gca,'XLim',[0 max(t)],'XTickLabel',[],'YTickLabel',[]);
+		
+	end
+	
+	
+	% Print to PNG
+	pg = pg + 1;
+	print(gcf,'-dpng',sprintf('%s/page_%02d.png',params.out_dir,pg));
+	close(gcf);
+	
+	
+end
+
+
+%%  Convert to single PDF
+if isdeployed()
+	magick_path = '/usr/bin/';
+else
+	magick_path = '/usr/local/bin';
+end
+system( [ ...
+	'cd ' params.out_dir ' && ' ...
+	magick_path '/convert ' ...
+	'page_*.png ' ...
+	'nirsqa.pdf' ...
+	] );
+ 
 
