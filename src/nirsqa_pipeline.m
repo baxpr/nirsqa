@@ -20,3 +20,6 @@ hb_write(mes,params);
 
 % Create PDF report
 make_pdf(mes,params);
+
+% Save all MES data to file
+save(fullfile(params.out_dir,'mes.mat'),'mes','params')
