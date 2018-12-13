@@ -22,13 +22,17 @@ totalheader_d{18} = sprintf('Moving Average[s],%3.1f',mes.sampletime_d);
 totalheader_d{26} = sprintf('Sampling Period[s],%3.1f',mes.sampletime_d);
 
 % Write original
-bfname = fullfile(params.out_dir,'tddr_HBA_Probe1_');
+tddr_dir = [params.out_dir filesep 'TDDR'];
+mkdir(tddr_dir);
+bfname = fullfile(tddr_dir,'tddr_HBA_Probe1_');
 write_hb_part([bfname 'Oxy.csv'],mes,oxyheader,mes.hb_oxy);
 write_hb_part([bfname 'Deoxy.csv'],mes,deoxyheader,mes.hb_deoxy);
 write_hb_part([bfname 'Total.csv'],mes,totalheader,mes.hb_total);
 
 % Write downsampled
-bfname = fullfile(params.out_dir,'tddr_d_HBA_Probe1_');
+tddr_d_dir = [params.out_dir filesep 'TDDR_DOWNSAMPLED'];
+mkdir(tddr_d_dir);
+bfname = fullfile(tddr_d_dir,'tddr_d_HBA_Probe1_');
 write_hb_part_d([bfname 'Oxy.csv'],mes,oxyheader_d,mes.hb_oxy_d);
 write_hb_part_d([bfname 'Deoxy.csv'],mes,deoxyheader_d,mes.hb_deoxy_d);
 write_hb_part_d([bfname 'Total.csv'],mes,totalheader_d,mes.hb_total_d);
